@@ -10,15 +10,45 @@ import * as Device from "expo-device";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import * as React from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image, Platform, StyleSheet, Dimensions } from "react-native";
 
-import DefaultImage from "../assets/images/icon.png";
+// Using require for image to ensure it works across all platforms
+const DefaultImage = require("../assets/images/cog_logo.png");
 
-const LOGO_IMAGE = Image.resolveAssetSource(DefaultImage).uri;
+// Get screen dimensions
+const screenWidth = Dimensions.get('window').width;
+const LOGO_WIDTH = Math.min(screenWidth * 0.8, 300); // 80% of screen width, max 300px
 
-const uuid = Crypto.randomUUID();
+// Generate UUID only on client-side to avoid SSR issues
+const useUUID = () => {
+  const [uuid, setUUID] = React.useState("");
+
+  React.useEffect(() => {
+    const generateUUID = async () => {
+      const newUUID = await Crypto.randomUUID();
+      setUUID(newUUID);
+    };
+    generateUUID();
+  }, []);
+
+  return uuid;
+};
+
 export default function SignIn() {
   const [empId, setEmpId] = React.useState("");
+  const uuid = useUUID();
+  const [imageSize, setImageSize] = React.useState({ width: LOGO_WIDTH, height: LOGO_WIDTH });
+
+  React.useEffect(() => {
+    // Get the original image dimensions to calculate aspect ratio
+    Image.getSize(Image.resolveAssetSource(DefaultImage).uri, (width, height) => {
+      const aspectRatio = height / width;
+      setImageSize({
+        width: LOGO_WIDTH,
+        height: LOGO_WIDTH * aspectRatio
+      });
+    });
+  }, []);
 
   const { signIn } = useSession();
   const router = useRouter();
@@ -43,24 +73,32 @@ export default function SignIn() {
   });
 
   return (
-    <Layout style={styles.container}>
-      <Image style={styles.tinyLogo} source={{ uri: LOGO_IMAGE }} />
+    <Layout style={styles.container} level='4'>
+      <Image 
+        style={[styles.tinyLogo, imageSize]} 
+        source={DefaultImage}
+        resizeMode="contain"
+      />
 
       <Input
+        style={styles.input}
         placeholder="Enter Employee ID"
         value={empId}
         onChangeText={(nextValue) => setEmpId(nextValue)}
+        size="large"
       />
       <Input
+        style={styles.input}
         placeholder="Enter your Employee Id"
         disabled
         value={deviceId ?? uuid}
+        size="large"
       />
       {isPending ? (
         <LoadingButton>Signing In</LoadingButton>
       ) : (
         <Button
-          style={{ width: "100%" }}
+          style={styles.button}
           onPress={() => {
             if (!empId) {
               toast("No Employee ID");
@@ -71,10 +109,8 @@ export default function SignIn() {
               empID: empId,
               UUID: deviceId ?? uuid,
             });
-            // if (!empId) return;
-            // signIn(deviceId ?? uuid, empId);
-            // router.replace("/");
           }}
+          size="large"
         >
           Sign In
         </Button>
@@ -86,13 +122,21 @@ export default function SignIn() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 20,
     gap: 20,
     alignItems: "center",
     justifyContent: "center",
   },
   tinyLogo: {
-    width: 150,
-    height: 150,
+    marginBottom: 20,
+    resizeMode: 'contain',
   },
+  input: {
+    width: '100%',
+    maxWidth: 400,
+  },
+  button: {
+    width: '100%',
+    maxWidth: 400,
+  }
 });

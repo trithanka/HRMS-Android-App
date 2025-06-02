@@ -24,18 +24,18 @@ export default function AttendanceScreen() {
 
   if (isLoading) {
     return (
-      <Layout style={styles.loadingContainer}>
+      <Layout style={styles.loadingContainer} level="2">
         <Spinner />
       </Layout>
     );
   }
 
   return (
-    <Layout style={styles.container} level="1">
-      <ScrollView>
+    <Layout style={styles.container} level="2">
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.innerContainer}>
-          <Card status="primary">
-            <Text category="s1" style={styles.fontBold}>
+          <Card style={styles.card} status="primary">
+            <Text category="h6" style={styles.fontBold}>
               {data?.personal?.name}
             </Text>
             <Text appearance="hint" category="p2">
@@ -54,7 +54,7 @@ export default function AttendanceScreen() {
                   Loading Location...
                 </Text>
               ) : (
-                <Text category="c2" style={styles.fontBold}>
+                <Text category="s2" style={styles.fontBold}>
                   {isInside ? "On Location" : "Outside of Location"}
                 </Text>
               )}
@@ -81,18 +81,18 @@ export default function AttendanceScreen() {
             )}
           </Card>
 
-          <Card status="success">
-            <Text style={styles.fontBold}>Activity In Progress</Text>
+          <Card style={styles.card} status="success">
+            <Text style={styles.fontBold} category="h6">Activity In Progress</Text>
 
-            <View style={{ gap: 10, marginTop: 30 }}>
+            <View style={styles.activityContainer}>
               <View>
                 <Text
-                  category="s2"
+                  category="s1"
                   style={[styles.textCenter, styles.fontBold]}
                 >
                   Office Address
                 </Text>
-                <Text category="p2" appearance="hint" style={styles.textCenter}>
+                <Text category="p1" appearance="hint" style={styles.textCenter}>
                   {data?.coordinates?.landmark}
                 </Text>
                 <Text category="p2" appearance="hint" style={styles.textCenter}>
@@ -101,49 +101,49 @@ export default function AttendanceScreen() {
                 </Text>
               </View>
 
-              <Text category="h1" style={styles.textCenter}>
+              <Text category="h1" style={[styles.textCenter, styles.timeText]}>
                 {data?.isPunchedOut === 1
                   ? "00:00"
                   : data?.loginTime ?? "00:00"}
               </Text>
-              <Text category="s2" style={styles.textCenter}>
+              <Text category="s1" style={styles.textCenter}>
                 Time Elapsed
               </Text>
             </View>
           </Card>
 
-          <Layout style={{ flexDirection: "row", gap: 10 }}>
-            <Card status="warning" style={{ flex: 1 }}>
-              <Text category="p2">Punch In</Text>
-              <Text category="h6">
+          <View style={styles.punchCardsContainer}>
+            <Card style={styles.punchCard} status="warning">
+              <Text category="s1">Punch In</Text>
+              <Text category="h5" style={styles.punchTime}>
                 {data?.attendanceTime?.inTime === ""
                   ? "00:00"
                   : data?.attendanceTime?.inTime}
               </Text>
-              <Text category="c2" appearance="hint">
+              <Text category="c1" appearance="hint">
                 {data?.attendanceTime?.attendanceMarkerIn}
               </Text>
             </Card>
 
-            <Card status="warning" style={{ flex: 1 }}>
-              <Text category="p2">Punch Out</Text>
-              <Text category="h6">
+            <Card style={styles.punchCard} status="warning">
+              <Text category="s1">Punch Out</Text>
+              <Text category="h5" style={styles.punchTime}>
                 {data?.attendanceTime?.outTime === ""
                   ? "00:00"
                   : data?.attendanceTime?.outTime}
               </Text>
-              <Text category="c2" appearance="hint">
+              <Text category="c1" appearance="hint">
                 {data?.attendanceTime?.attendanceMarkerOut}
               </Text>
             </Card>
-          </Layout>
+          </View>
 
-          <Card status="danger" style={styles.mainCard}>
-            <Text style={styles.fontBold}>Notifications</Text>
+          <Card style={[styles.card, styles.notificationCard]} status="danger">
+            <Text style={styles.fontBold} category="h6">Notifications</Text>
 
-            <View style={{ gap: 5 }}>
+            <View style={styles.notificationList}>
               {data?.notification?.map((not, index) => (
-                <Text key={index} category="c2">
+                <Text key={index} category="p2" style={styles.notificationText}>
                   {not}
                 </Text>
               ))}
@@ -165,21 +165,27 @@ export default function AttendanceScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    gap: 10,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 16,
   },
   innerContainer: {
     flex: 1,
-    gap: 10,
+    gap: 16,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  mainCard: {
-    flex: 1,
-    minHeight: 100,
+  card: {
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderRadius: 12,
   },
   fontBold: {
     fontWeight: "700",
@@ -188,9 +194,43 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   status: {
-    marginTop: 10,
+    marginTop: 16,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 12,
+  },
+  activityContainer: {
+    gap: 16,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  timeText: {
+    marginVertical: 8,
+  },
+  punchCardsContainer: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  punchCard: {
+    flex: 1,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderRadius: 12,
+  },
+  punchTime: {
+    marginVertical: 8,
+  },
+  notificationCard: {
+    minHeight: 100,
+  },
+  notificationList: {
+    gap: 8,
+    marginTop: 12,
+  },
+  notificationText: {
+    lineHeight: 20,
   },
 });

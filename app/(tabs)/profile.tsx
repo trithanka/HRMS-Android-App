@@ -2,18 +2,25 @@ import { fetchProfile } from "@/api/profile.api";
 import { QUERY_KEY } from "@/constants/keys";
 import { useSession } from "@/contexts/authContext";
 import { formatDate } from "@/utils/helpers";
-// import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
-import { Divider, Layout, Spinner, Text } from "@ui-kitten/components";
+import { Button, Divider, Layout, Spinner, Text } from "@ui-kitten/components";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
 
 export default function ProfileScreen() {
-  const { session } = useSession();
+  const { session, signOut } = useSession();
+  const router = useRouter();
 
   const { data, isPending } = useQuery({
     queryKey: [QUERY_KEY.PROFILE],
     queryFn: () => fetchProfile(session ?? ""),
   });
+
+  const handleSignOut = () => {
+    signOut();
+    router.replace("/sign-in");
+  };
 
   if (isPending) {
     return (
@@ -96,16 +103,14 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* <Button
-          onPress={() => {
-            signOut();
-          }}
-          accessoryRight={
-            <MaterialIcons name="logout" size={24} color="white" />
-          }
+        <Button
+          onPress={handleSignOut}
+          status="danger"
+          accessoryRight={props => <MaterialIcons name="logout" size={24} color="white" />}
+          style={styles.logoutButton}
         >
           Sign Out
-        </Button> */}
+        </Button>
       </Layout>
     </ScrollView>
   );
@@ -142,5 +147,8 @@ const styles = StyleSheet.create({
   },
   groupSubtitle: {
     color: "grey",
+  },
+  logoutButton: {
+    marginVertical: 20,
   },
 });
