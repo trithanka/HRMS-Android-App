@@ -2,7 +2,7 @@ import axios from "axios";
 import { Platform } from "react-native";
 
 // Use your actual machine's IP address here
-const LOCAL_IP = '192.168.0.104'; // Your machine's IP address
+const LOCAL_IP = '192.168.148.53'; // Your machine's IP address
 
 export const API = axios.create({
   // For Android Emulator, use 10.0.2.2

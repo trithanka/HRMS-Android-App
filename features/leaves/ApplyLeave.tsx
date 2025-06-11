@@ -88,6 +88,7 @@ export default function ApplyLeave({
   function submitHandler() {
     const formData = new FormData();
     formData.append("empId", session ?? "");
+    // @ts-ignore
     formData.append("leaveType", LEAVE_TYPE_INDEX[leaveType]);
     formData.append(
       "fromDate",
@@ -109,6 +110,7 @@ export default function ApplyLeave({
     );
     formData.append("responsible", tempOversight.toString());
     formData.append("file", file);
+    // @ts-ignore
     formData.append("dayType", DAY_TYPE_INDEX[dayType]);
     mutate(formData);
   }
@@ -152,8 +154,8 @@ export default function ApplyLeave({
           >
             <Radio>Casual Leave</Radio>
             <Radio>Medical Leave</Radio>
-            <Radio>Restricted Holiday</Radio>
-            <Radio>Parental Leave</Radio>
+            {/* <Radio>Restricted Holiday</Radio>
+            <Radio>Parental Leave</Radio> */}
           </RadioGroup>
         </Layout>
         <Divider />

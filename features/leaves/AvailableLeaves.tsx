@@ -6,24 +6,24 @@ export default function AvailableLeaves({ data }: any) {
     <Layout style={styles.leaveContainer}>
       <Text style={styles.title}>Available Leaves</Text>
       <Layout style={styles.cardContainer}>
-        <Layout level="3">
-          <Card>
+        <Layout style={styles.leftCard}>
+          <Card style={styles.casualCard}>
             <Text category="c2">Casual Leave</Text>
             <Text category="h6">{data?.leaves?.casualLeave ?? ""} Days</Text>
           </Card>
         </Layout>
-        <Layout level="2">
-          <Card>
-            <Text category="c2">Medial Leave</Text>
+        <Layout style={styles.rightCard}>
+          <Card style={styles.medicalCard}>
+            <Text category="c2">Medical Leave</Text>
             <Text category="h6">{data?.leaves?.sickLeave ?? ""} Days</Text>
           </Card>
         </Layout>
-        <Layout level="1">
-          <Card>
+        {/* <Layout level="1"> */}
+          {/* <Card>
             <Text category="c2">Parental Leave</Text>
             <Text category="h6">{data?.leaves?.parentalLeave ?? ""} Days</Text>
-          </Card>
-        </Layout>
+          </Card> */}
+        {/* </Layout> */}
       </Layout>
       <Divider />
     </Layout>
@@ -34,6 +34,28 @@ const styles = StyleSheet.create({
   cardContainer: {
     flexDirection: "row",
     paddingBottom: 20,
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
+  leftCard: {
+    flex: 1,
+    marginRight: 5,
+    borderRadius: 8,
+  },
+  rightCard: {
+    flex: 1,
+    marginLeft: 5,
+    borderRadius: 8,
+  },
+  casualCard: {
+    backgroundColor: '#E3F2FD',
+    borderColor: '#90CAF9',
+    borderWidth: 1,
+  },
+  medicalCard: {
+    backgroundColor: '#F3E5F5',
+    borderColor: '#CE93D8',
+    borderWidth: 1,
   },
   leaveContainer: {
     gap: 10,
